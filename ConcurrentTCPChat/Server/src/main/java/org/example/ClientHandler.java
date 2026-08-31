@@ -38,7 +38,24 @@ public class ClientHandler implements Runnable {
             );
 
             // First message is the username
-            username = input.readLine();
+            String requestedUsername = input.readLine();
+
+            if (requestedUsername == null) {
+                return;
+            }
+
+            requestedUsername = requestedUsername.trim();
+
+            if (clientManager.usernameExists(requestedUsername)) {
+                send("Username already in use.");
+                return;
+            }
+
+            username = requestedUsername;
+
+            if (username == null) {
+                return;
+            }
 
             System.out.println(
                     username + " joined the chat."
@@ -71,19 +88,46 @@ public class ClientHandler implements Runnable {
                 if (message.startsWith("/name ")) {
                     String newName = message.substring(6).trim();
 
-                    if (newName.isEmpty()){
-                        clientManager.broadcast("You have to write a name");
+                    if (newName.isEmpty()) {
+                        send("You have to write a name");
                         continue;
                     }
 
+                    if (clientManager.usernameExists(newName)) {
+                        send("Username already in use.");
+                        continue;
+                    }
+
+                    String oldName = username;
                     username = newName;
+
                     clientManager.broadcast(
-                            "You are now known as "+ newName
+                            oldName + " is now known as " + newName
                     );
+
                     continue;
                 }
 
+                if (message.startsWith("/whisper ")) {
 
+                    String[] parts = message.split(" ", 3);
+
+                    if (parts.length < 3) {
+                        send("Usage: /whisper <username> <message>");
+                        continue;
+                    }
+
+                    String targetUsername = parts[1];
+                    String privateMessage = parts[2];
+
+                    clientManager.whisper(
+                            this,
+                            targetUsername,
+                            privateMessage
+                    );
+
+                    continue;
+                }
 
                 clientManager.broadcast(
                         username + ": " + message
@@ -105,10 +149,12 @@ public class ClientHandler implements Runnable {
             } catch (IOException e) {
                 // Ignore
             }
+            if (username != null) {
+                clientManager.broadcast(
+                        username + " left the chat."
+                );
+            }
 
-            clientManager.broadcast(
-                    username + " left the chat."
-            );
         }
     }
 

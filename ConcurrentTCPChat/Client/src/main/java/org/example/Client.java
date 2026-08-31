@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Client {
 
     private static final String HOST = "localhost";
-    private static final int DEFAULT_PORT_CONTROL = 5000;
+    private static final int DEFAULT_PORT_CONTROL = 5001;
 
     public static void main(String[] args) {
 
@@ -35,11 +35,19 @@ public class Client {
                     new Scanner(System.in);
 
             // Set username
-            System.out.print("Enter username: ");
+            String userName;
 
-            String username = scanner.nextLine();
+            do {
+                System.out.print("Enter username: ");
+                userName = scanner.nextLine().trim();
 
-            serverOutput.println(username);
+                if (userName.isEmpty()) {
+                    System.out.println("Username cannot be empty.");
+                }
+
+            } while (userName.isEmpty());
+
+            serverOutput.println(userName);
 
             // Thread for receiving messages
             Thread receiver = new Thread(() -> {

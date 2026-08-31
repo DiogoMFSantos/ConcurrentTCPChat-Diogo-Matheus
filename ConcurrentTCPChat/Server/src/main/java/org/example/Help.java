@@ -24,8 +24,8 @@ public class Help  implements FtpCommand {
 
         for (Commands commands : Commands.values()) {
 
-            stringBuilder.append(">>> ")
-                    .append(commands.name())
+            stringBuilder.append(">>> /")
+                    .append(commands.name().toLowerCase())
                     .append(" -> ")
                     .append(commands.getDescription())
                     .append("\n");

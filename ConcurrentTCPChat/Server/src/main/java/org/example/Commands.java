@@ -2,7 +2,7 @@ package org.example;
 
 public enum Commands {
 
-    LS("List all Connected Clients"),
+    LIST("List all Connected Clients"),
     WHISPER("Send a Message to a Specific User"),
     NAME("Change User Name"),
     HELP("List All Available Commands"),
